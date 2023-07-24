@@ -1,0 +1,25 @@
+#!/bin/sh
+
+set -u
+
+: "${XDG_RUNTIME_DIR:="/tmp"}"
+: "${ENVRUND_HOME="${XDG_RUNTIME_DIR}"}"
+: "${ENVRUND_FIFO="${ENVRUND_HOME}/envrund.fifo"}"
+: "${ENVRUND_LOCKFILE="${ENVRUND_HOME}/envrund.lock"}"
+
+# acquire lock
+mkdir -p "$(dirname "${ENVRUND_LOCKFILE}")"
+[ -f "${ENVRUND_LOCKFILE}" ] && { printf >&2 "envrund: already running (envrund.lock found)\n" && exit 1; }
+touch "${ENVRUND_LOCKFILE}" && trap "rm -f '${ENVRUND_LOCKFILE}'; rm -f "${ENVRUND_FIFO}"; exit" EXIT HUP TERM INT
+
+# ensure fifo
+rm -f "${ENVRUND_FIFO}"
+mkdir -p "$(dirname "${ENVRUND_FIFO}")"
+mkfifo "${ENVRUND_FIFO}"
+
+# do commands
+while true; do
+  command="$(cat "${ENVRUND_FIFO}")"
+  printf >&2 "envrund: running '%s'\n" "${command}"
+  sh -c "${command}"
+done

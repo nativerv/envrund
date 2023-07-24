@@ -1,0 +1,25 @@
+[Unit]
+Description=envrund at graphical session '%i' - run programs with this user's environment
+Documentation=
+
+[Service]
+Type=exec
+ExecStart=sh -c 'session -s "%i" run "envrund"'
+
+# Prevent swapping
+MemorySwapMax=0
+
+# Sandboxing
+; NoNewPrivileges=yes
+; ProtectKernelTunables=yes
+; ProtectControlGroups=yes
+; RestrictNamespaces=yes
+; LockPersonality=true
+; MemoryDenyWriteExecute=true
+; PrivateUsers=true
+; RestrictNamespaces=true
+; SystemCallArchitectures=native
+#SystemCallFilter=@system-service
+
+[Install]
+WantedBy=default.target

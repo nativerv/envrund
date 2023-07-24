@@ -1,0 +1,9 @@
+#!/bin/sh
+
+printf '%s' "$(ps -p 1 -o comm=)" | grep -q 'systemd' && : "${XDG_RUNTIME_DIR:="/run/user/$(id -u)"}"
+: "${XDG_RUNTIME_DIR:="/tmp"}"
+
+tty="$(cat '/sys/class/tty/tty0/active')"
+
+export ENVRUND_FIFO="${XDG_RUNTIME_DIR}/envrund/${tty}/envrund.fifo"
+envrun "${@}"

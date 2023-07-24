@@ -1,0 +1,9 @@
+#!/bin/sh
+
+printf '%s' "$(ps -p 1 -o comm=)" | grep -q 'systemd' && : "${XDG_RUNTIME_DIR:="/run/user/$(id -u)"}"
+: "${XDG_RUNTIME_DIR:="/tmp"}"
+: "${ENVRUND_HOME:="${XDG_RUNTIME_DIR}"}"
+: "${ENVRUND_FIFO:="${ENVRUND_HOME}/envrund.fifo"}"
+
+mkdir -p "${ENVRUND_HOME}"
+printf '%s' "${*}" > "${ENVRUND_FIFO}"

@@ -1,0 +1,24 @@
+[Unit]
+Description=Restart envrund service at tty '%i' when graphical session at '%i' starts
+Documentation=https://github.com/nativerv/dotfiles
+After=graphical-session@%i.target
+Requisite=graphical-session@%i.target
+
+[Service]
+Type=exec
+ExecStart=sh -c 'systemctl --user restart "envrund@%i.service"'
+
+# Sandboxing
+NoNewPrivileges=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictNamespaces=yes
+LockPersonality=true
+MemoryDenyWriteExecute=true
+PrivateUsers=true
+RestrictNamespaces=true
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+
+[Install]
+WantedBy=graphical-session@%i.target
