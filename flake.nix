@@ -15,7 +15,8 @@
     ];
   in {
     packages = forAllSystems (system: let
-      pkgs = import nixpkgs { inherit system; };
+      pkgs = nixpkgs.legacyPackages.${system};
+      inherit (pkgs) lib;
     in {
       default = self.packages.${system}.envrund;
       envrund = pkgs.stdenv.mkDerivation {
@@ -23,11 +24,23 @@
         pname = "envrund";
         src = ./.;
 
-        nativeBuildInputs = with pkgs; [ coreutils ];
+        nativeBuildInputs = with pkgs; [ makeWrapper ];
 
         installPhase = ''
           mkdir -p $out/bin
           install -t $out/bin -m 755 envrund envrun 
+        '';
+
+        postFixup = with pkgs; ''
+          for bin in $out/bin/*; do
+            wrapProgram $bin \
+              --suffix PATH ${lib.makeBinPath [
+                coreutils
+                gnugrep
+                bash
+                procps
+              ]}
+          done
         '';
       };
     });
