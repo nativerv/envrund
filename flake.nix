@@ -14,6 +14,10 @@
       "aarch64-darwin"
     ];
   in {
+    homeManagerModules = {
+      default = self.homeManagerModules.envrund;
+      envrund = import ./home-manager/modules/services/envrund.nix { inherit self; };
+    };
     packages = forAllSystems (system: let
       pkgs = nixpkgs.legacyPackages.${system};
       inherit (pkgs) lib;
