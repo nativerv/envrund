@@ -38,7 +38,7 @@
         postFixup = with pkgs; ''
           for bin in $out/bin/*; do
             wrapProgram $bin \
-              --suffix PATH ${lib.makeBinPath [
+              --suffix PATH : ${lib.makeBinPath [
                 coreutils
                 gnugrep
                 bash
